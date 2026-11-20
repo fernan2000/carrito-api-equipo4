@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import mixins, viewsets
 
 from .models import Componente, HistorialDecision, TiempoReaccion
 from .serializers import (
@@ -15,7 +15,13 @@ class ComponenteViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_value_regex = "[^/]+"  # permite nombres con espacios, puntos, etc.
 
 
-class HistorialDecisionViewSet(viewsets.ReadOnlyModelViewSet):
+# GET (listar/detalle) + POST (el carrito guarda decisiones). Sin PUT/PATCH/DELETE.
+class HistorialDecisionViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
+):
     queryset = HistorialDecision.objects.all().order_by("-id")
     serializer_class = HistorialDecisionSerializer
 
